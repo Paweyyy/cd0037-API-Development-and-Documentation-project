@@ -47,3 +47,74 @@ Pay special attention to what data the frontend is expecting from each API respo
 By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
 
 > View the [Frontend README](./frontend/README.md) for more details.
+
+## API Reference
+
+### Getting Started
+- Base URL: At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, `http://127.0.0.1:5000/`, which is set as a proxy in the frontend configuration. 
+- Authentication: This version of the application does not require authentication or API keys. 
+
+### Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+    "success": False, 
+    "error": 400,
+    "message": "bad request"
+}
+```
+The API will return three error types when requests fail:
+- 400: Bad Request
+- 404: Resource Not Found
+- 422: Not Processable 
+- 500: Internal Server Error
+
+### Endpoints 
+#### GET /categories 
+
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Request Arguments: None
+- Returns: A list with all existing categories and success value
+
+``` 
+  {
+    'categories': { 
+      '1' : "Science",
+      '2' : "Art",
+      '3' : "Geography",
+      '4' : "History",
+      '5' : "Entertainment",
+      '6' : "Sports" 
+    },
+    "success": true,
+}
+```
+
+#### GET /questions?page=1
+
+- Fetches a paginated dictionary of questions
+- Request Arguments: The request argument "page" is used for pagination e.g.: ?page=1 and returns 10 questions
+- Returns: A list with 10 questions, the total number of questions and all categories
+
+``` 
+{
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 2
+        },
+    ],
+    'totalQuestions':00,
+    'categories': { 
+      '1' : "Science",
+      '2' : "Art",
+      '3' : "Geography",
+      '4' : "History",
+      '5' : "Entertainment",
+      '6' : "Sports" },
+    'currentCategory': 'History'
+}
+```
