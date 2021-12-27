@@ -130,7 +130,7 @@ The API will return three error types when requests fail:
     'deleted': 2
 }
 ```
-### GET /categories/${category_id}/questions
+#### GET /categories/${category_id}/questions
 
 - Gets all questions from one category based on the provided category id
 - Request Argument: category_id - Integer
@@ -152,7 +152,7 @@ The API will return three error types when requests fail:
 }
 ```
 
-### POST /questions
+#### POST /questions
 
 - Post request to create a new question
 - Request Body:
@@ -172,7 +172,7 @@ The API will return three error types when requests fail:
 }
 ```
 
-### POST /questions
+#### POST /questions
 
 - Post request to search for a question
 - Request Body:
@@ -200,7 +200,7 @@ The API will return three error types when requests fail:
 }
 ```
 
-### POST /quizzes
+#### POST /quizzes
 
 - Sends a post request in order to get the next question
 - Request Body:
