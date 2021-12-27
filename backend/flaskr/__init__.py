@@ -10,14 +10,9 @@ from models import setup_db, Question, Category
 QUESTIONS_PER_PAGE = 10
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(__name__)
     setup_db(app)
     CORS(app, ressources={ r"*/api/*": { "origins": '*' }})
-    
-    """
-    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-    """
 
     @app.after_request
     def after_request(response):
@@ -42,7 +37,7 @@ def create_app(test_config=None):
     def format_categories(cat):
         res = {}
         for c in cat:
-            res[c["id"]] = c["type"]
+            res[int(c["id"])] = c["type"]
         return res
 
     @app.route('/categories', methods=['GET'])
@@ -73,9 +68,9 @@ def create_app(test_config=None):
             {
                 "success": True,
                 "questions": current_questions,
-                "totalQuestions": len(Question.query.all()),
+                "total_questions": len(Question.query.all()),
                 "categories": categories_formatted,
-                "currentCategory": "history"
+                "current_category": None
             }
         )
 
@@ -83,12 +78,11 @@ def create_app(test_config=None):
     @app.route('/questions/<int:question_id>', methods=["DELETE"])
     def delete_question(question_id):
         try:
-            print(question_id)
             question = Question.query.filter_by(id=question_id).one_or_none()
-
-            if question is None:
+            if question == None:
                 abort(404)
 
+            print(question)
             question.delete()
             selection = Question.query.order_by(Question.id).all()
             current_questions = paginate_questions(request, selection)
@@ -97,29 +91,29 @@ def create_app(test_config=None):
                 {
                     "success": True,
                     "deleted": question_id,
-                    "questions": current_questions,
-                    "totalQuestions": len(Question.query.all()),
                 }
             )
         except Exception as e:
             print(e)
-            abort(422)
-        return None
+            abort(404)
 
     @app.route("/categories/<int:category_id>/questions", methods=["GET"])
     def get_questions_form_category(category_id):
+        selection = Question.query.order_by(Question.id).all()
         c = Category.query.filter_by(id=category_id).one_or_none()
-        print(c)
+
         if c is None:
             abort(404)
 
-        q = Question.query.filter_by(category=category_id).all()
-        q_form = [qu.format() for qu in q]
+        category = c.format()["type"]
+        selection = Question.query.filter_by(category=category_id).all()
+        current_questions = paginate_questions(request, selection)
+
         return(jsonify({
             "success": True,
-            "questions": q_form,
-            "totalQuestions": len(Question.query.all()),
-            "currentCategory": c.format()
+            "questions": current_questions,
+            "total_questions": len(Question.query.filter_by(id=category_id).all()),
+            "current_category": category
         }))
 
     
@@ -148,6 +142,10 @@ def create_app(test_config=None):
                 new_answer = body.get("answer", None)
                 new_difficulty = body.get("difficulty", None)
                 new_category = body.get("category", None)
+
+                if new_question == None or new_answer == None or new_difficulty == None or new_category == None:
+                    abort(422)
+                
                 question = Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category=new_category)
                 question.insert()
 
@@ -175,6 +173,10 @@ def create_app(test_config=None):
             questions = Question.query.filter_by(category=int(quiz_category["id"])).all()
         else:
             questions = Question.query.all()
+
+        if len(questions) == 0:
+            abort(422)
+            
         q_f = [qu.format() for qu in questions]
         filtered = list(filter(lambda q: q["id"] not in previous_questions, q_f))
         res = random.choice(filtered)
