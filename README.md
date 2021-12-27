@@ -93,7 +93,7 @@ The API will return three error types when requests fail:
 #### GET /questions?page=1
 
 - Fetches a paginated dictionary of questions
-- Request Arguments: The request argument "page" is used for pagination e.g.: ?page=1 and returns 10 questions
+- Request Arguments: page - Integer
 - Returns: A list with 10 questions, the total number of questions and all categories
 
 ``` 
@@ -116,5 +116,110 @@ The API will return three error types when requests fail:
       '5' : "Entertainment",
       '6' : "Sports" },
     'currentCategory': 'History'
+}
+```
+#### DELETE /questions/${id}
+
+- Deletes a single question based on provided ID
+- Request Arguments: id - Integer
+- Returns: A success variable and the id of the deleted question
+
+``` 
+{
+    'success': true,
+    'deleted': 2
+}
+```
+### GET /categories/${category_id}/questions
+
+- Gets all questions from one category based on the provided category id
+- Request Argument: category_id - Integer
+- Returns: 
+
+```
+{
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 4
+        },
+    ],
+    'totalQuestions': 100,
+    'currentCategory': 'History'
+}
+```
+
+### POST /questions
+
+- Post request to create a new question
+- Request Body:
+```
+{
+    'question':  'Heres a new question string',
+    'answer':  'Heres a new answer string',
+    'difficulty': 1,
+    'category': 3,
+}
+```
+- Returns: 
+
+```
+{
+    'success': true
+}
+```
+
+### POST /questions
+
+- Post request to search for a question
+- Request Body:
+```
+{
+    'searchTerm': 'Tom Hanks'
+}
+```
+- Returns: 
+
+```
+{
+    'success': true,
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 5
+        },
+    ],
+    'totalQuestions': 100,
+    'currentCategory': 'Entertainment'
+}
+```
+
+### POST /quizzes
+
+- Sends a post request in order to get the next question
+- Request Body:
+```
+{
+    'previous_questions': [1, 4, 20, 15]
+    quiz_category': 'current category'
+ }
+```
+- Returns: 
+
+```
+{
+    'question': {
+        'id': 1,
+        'question': 'This is a question',
+        'answer': 'This is an answer',
+        'difficulty': 5,
+        'category': 4
+    }
 }
 ```
